@@ -1,7 +1,7 @@
 import { platform } from '@tauri-apps/plugin-os';
 import {useEffect, useState} from "react";
 
-// import {getSystemInfoLinux} from "../functions/sysinfo/linux";
+import {getSystemInfoLinux} from "../functions/sysinfo/linux";
 import {getSystemInfoMacOS} from "../functions/sysinfo/macos";
 
 function SystemReport() {
@@ -13,13 +13,17 @@ function SystemReport() {
             let {cpu, memory, windowmanager, osInfo} = "";
             const currentPlatform = platform();
             setOs(currentPlatform);
+            let systemInfo;
             if(currentPlatform === "macos") {
-                let systemInfo = await getSystemInfoMacOS();
-                cpu = systemInfo.cpu;
-                memory = systemInfo.memory;
-                windowmanager = systemInfo.windowmanager;
-                osInfo = systemInfo.osInfo;
+                systemInfo = await getSystemInfoMacOS();
             }
+            if(currentPlatform === "linux") {
+                systemInfo = await getSystemInfoLinux();
+            }
+            cpu = systemInfo.cpu;
+            memory = systemInfo.memory;
+            windowmanager = systemInfo.windowmanager;
+            osInfo = systemInfo.osInfo;
             if(osInfo === "") {
                 setSystemReport("Unsupported OS");
                 return;

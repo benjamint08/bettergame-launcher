@@ -8,6 +8,7 @@ import Settings from "./routes/Settings.jsx";
 import SystemReport from "./routes/SystemReport.jsx";
 
 import Login from "./routes/auth/Login.jsx";
+import Logout from "./routes/auth/Logout.jsx";
 
 import HomeLayout from "./layouts/HomeLayout";
 
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </Route>
 
             <Route path="login" element={<Login />} />
+            <Route path="logout" element={<Logout />} />
         </Routes>
     </BrowserRouter>
 );

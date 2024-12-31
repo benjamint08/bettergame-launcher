@@ -24,6 +24,10 @@
         }
       ]
     },
-    "os:default"
+    "os:default",
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://better.game" }, { "url": "https://better-game.network" }]
+    }
   ]
 }
