@@ -5,6 +5,9 @@ import {BrowserRouter, Route, Routes} from "react-router";
 import App from "./App";
 import Home from "./routes/Home.jsx";
 import Settings from "./routes/Settings.jsx";
+import SystemReport from "./routes/SystemReport.jsx";
+
+import Login from "./routes/auth/Login.jsx";
 
 import HomeLayout from "./layouts/HomeLayout";
 
@@ -18,7 +21,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route path="home" element={<HomeLayout />}>
                 <Route index element={<Home />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="sysreport" element={<SystemReport />} />
             </Route>
+
+            <Route path="login" element={<Login />} />
         </Routes>
     </BrowserRouter>
 );
