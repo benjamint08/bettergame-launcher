@@ -9,7 +9,6 @@ function Home() {
     const [allDataReady, setAllDataReady] = useState(false);
     const [daemonRunning, setDaemonRunning] = useState(false);
     const [daemonLogs, setDaemonLogs] = useState("");
-    const [showDaemonLogs, setShowDaemonLogs] = useState(false);
     const [child, setChild] = useState(null);
     const [assetsReady, setAssetsReady] = useState(false);
 
@@ -42,11 +41,15 @@ function Home() {
         checkDaemon();
     }, []);
 
+    function appendToLogs(log) {
+        const holdLogs = daemonLogs;
+        setDaemonLogs(holdLogs + "\n" + log);
+    }
+
     async function startDaemon() {
         // kill all existing daemons
         await killDaemon();
         setDaemonRunning(false);
-        setDaemonLogs("");
         const dmn = await Command.create('exec-sh', [
             '-c',
             '~/.local/share/co.p3pr.bettergame-launcher/bettergame-daemon'
@@ -55,8 +58,8 @@ function Home() {
             console.log(`command finished with code ${data.code} and signal ${data.signal}`)
             setDaemonRunning(false);
         });
-        dmn.stdout.on('data', line => setDaemonLogs(daemonLogs + line));
-        dmn.stderr.on('data', line => setDaemonLogs(daemonLogs + line));
+        dmn.stdout.on('data', line => console.log("DAEMON: " + line));
+        dmn.stderr.on('data', line => console.log("DAEMON: " + line));
 
         const child = await dmn.spawn();
         setDaemonRunning(true);
@@ -100,20 +103,10 @@ function Home() {
             {daemonRunning && (
                 <div className={"mt-2 text-2xl font-bold"}>
                     <p>daemon running? yes</p>
-                    <button className={"bg-[#2a2a2a] text-white p-2 text-sm rounded mt-2"} onClick={() => setShowDaemonLogs(!showDaemonLogs)}>{showDaemonLogs ? "hide" : "show"} daemon logs</button>
                     <button className={"bg-red-500 text-white p-2 text-sm rounded mt-2"} onClick={async() => {
                         await killDaemon();
                         setDaemonRunning(false);
-                        setDaemonLogs("");
                     }}>stop daemon</button>
-                </div>
-            )}
-            {showDaemonLogs && (
-                <div className={"mt-2"}>
-                    <p>daemon logs:</p>
-                    <pre className={"bg-[#2a2a2a] text-white p-2 rounded mt-2 block"}>
-                        {daemonLogs}
-                    </pre>
                 </div>
             )}
             {daemonRunning && !assetsReady && (
