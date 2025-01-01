@@ -2,4 +2,10 @@
 ## by [p3pr.co](https://p3pr.co)
 
 > [!WARNING]
-> This is currently in development and not ready for use. When it is ready, it will be available in releases.
+> This is currently in development. Check frequently for updates.
+
+### Installation
+
+1. download the latest version from the [releases](https://github.com/benjamint08/bettergame-launcher/releases) page.
+2. run the file of choice (rpm, deb, appimage).
+3. success
