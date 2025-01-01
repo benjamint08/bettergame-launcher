@@ -1,6 +1,6 @@
 [package]
 name = "bettergame-launcher"
-version = "1.0.2"
+version = "1.0.3"
 description = "run better.game, better"
 authors = ["benjamint08"]
 edition = "2021"

@@ -86,6 +86,22 @@ function Home() {
         checkDaemon();
     }, []);
 
+    async function userQuit() {
+        await fetch("http://localhost:8080/user-quit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "auth": localStorage.getItem("token"),
+                "username": localStorage.getItem("username")
+            })
+        }).then(() => {
+            setPlaying(false);
+            setMode("");
+        });
+    }
+
     async function playOffline() {
         await removeTuneLinux();
         setPlaying(true);
@@ -101,6 +117,9 @@ function Home() {
             })
         })
         setTimeout(() => {
+            if(playing === false) {
+                return;
+            }
             setPlaying(false);
             setMode("");
         }, 20000);
@@ -262,6 +281,7 @@ function Home() {
                 <div className={"mt-2 text-2xl font-bold"}>
                     <p>playing...</p>
                     <p>mode: {mode}</p>
+                    <button className={"bg-red-500 text-white p-2 text-sm rounded mt-2"} onClick={userQuit}>force quit game</button>
                 </div>
             )}
         </div>
