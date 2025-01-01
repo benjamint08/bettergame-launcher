@@ -38,11 +38,27 @@ function Home() {
             ]).execute();
             if(daemon.stdout !== "") {
                 setDaemonRunning(true);
+                beginCheckAssets();
             }
         } catch (e) {
             console.log("no existing daemons found");
             setDaemonRunning(false);
         }
+    }
+
+    async function removeTuneLinux() {
+        await Command.create('exec-sh', [
+            '-c',
+            'rm -rf /tmp/Protoverse/assets/tune_linux.sh'
+        ]).execute();
+        await Command.create('exec-sh', [
+            '-c',
+            'echo "exit 0" > /tmp/Protoverse/assets/tune_linux.sh'
+        ]).execute();
+        await Command.create('exec-sh', [
+            '-c',
+            'chmod +x /tmp/Protoverse/assets/tune_linux.sh'
+        ]).execute();
     }
 
     useEffect(() => {
@@ -71,6 +87,7 @@ function Home() {
     }, []);
 
     async function playOffline() {
+        await removeTuneLinux();
         setPlaying(true);
         setMode("offline");
         await fetch(`http://localhost:8080/launch-offline`, {
@@ -95,6 +112,7 @@ function Home() {
         await fetch(`http://localhost:8080/kill?username=${localStorage.getItem("username")}&auth=${localStorage.getItem("token")}`, {
             method: "POST"
         });
+        await removeTuneLinux();
         await fetch(`http://localhost:8080/launch-client`, {
             method: "POST",
             headers: {
@@ -111,23 +129,7 @@ function Home() {
         }, 20000);
     }
 
-    async function startDaemon() {
-        // kill all existing daemons
-        await killDaemon();
-        setDaemonRunning(false);
-        const dmn = await Command.create('exec-sh', [
-            '-c',
-            '~/.local/share/co.p3pr.bettergame-launcher/bettergame-daemon'
-        ]);
-        dmn.on('close', data => {
-            console.log(`command finished with code ${data.code} and signal ${data.signal}`)
-            setDaemonRunning(false);
-        });
-        dmn.stdout.on('data', line => console.log("DAEMON: " + line));
-        dmn.stderr.on('data', line => console.log("DAEMON: " + line));
-
-        await dmn.spawn();
-        setDaemonRunning(true);
+    function beginCheckAssets() {
         setAssetsReady(false);
         setTimeout(async () => {
             const assetsReady = await fetch(`http://localhost:8080/fetch-assets`, {
@@ -171,6 +173,26 @@ function Home() {
                 setPingReady(true);
             }
         }, 2000);
+    }
+
+    async function startDaemon() {
+        // kill all existing daemons
+        await killDaemon();
+        setDaemonRunning(false);
+        const dmn = await Command.create('exec-sh', [
+            '-c',
+            '~/.local/share/co.p3pr.bettergame-launcher/bettergame-daemon'
+        ]);
+        dmn.on('close', data => {
+            console.log(`command finished with code ${data.code} and signal ${data.signal}`)
+            setDaemonRunning(false);
+        });
+        dmn.stdout.on('data', line => console.log("DAEMON: " + line));
+        dmn.stderr.on('data', line => console.log("DAEMON: " + line));
+
+        await dmn.spawn();
+        setDaemonRunning(true);
+        beginCheckAssets();
     }
 
     return (
