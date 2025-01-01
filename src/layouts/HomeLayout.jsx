@@ -2,6 +2,7 @@ import {Link, Outlet, useLocation} from "react-router";
 import {useEffect, useState} from "react";
 import {fetch} from "@tauri-apps/plugin-http";
 import { getVersion } from '@tauri-apps/api/app';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 const routes = [{
     "name": "play",
@@ -72,9 +73,26 @@ function HomeLayout() {
         }
     }, [location]);
 
+    useEffect(() => {
+        const titlebar = document.getElementById('titlebar');
+        const appWindow = getCurrentWindow();
+
+        const handleMouseDown = (e) => {
+            if (e.buttons === 1) {
+                e.detail === 2 ? appWindow.toggleMaximize() : appWindow.startDragging();
+            }
+        };
+
+        titlebar.addEventListener('mousedown', handleMouseDown);
+
+        return () => {
+            titlebar.removeEventListener('mousedown', handleMouseDown);
+        };
+    }, []);
+
     return (
         <div className="flex flex-col h-screen">
-            <nav data-tauri-drag-region className="bg-[#1e1e1e] text-white p-4 border-b-2 flex justify-between items-center select-none">
+            <nav id={"titlebar"} className="bg-[#1e1e1e] text-white p-4 border-b-2 flex justify-between items-center select-none">
                 <h1 className="text-xl font-bold">better.game</h1>
                 {!loggedIn && (
                     <Link to={"/login"}>

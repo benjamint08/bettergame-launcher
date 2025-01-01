@@ -70,7 +70,7 @@ function Settings() {
                 <p>here you can change settings for the better.game launcher.</p>
                 <p>if you are having issues, you can try restarting the daemon.</p>
             </div>
-            <p className={"text-center mt-4"}>
+            <div className={"text-center mt-4"}>
                 {!daemonExists && !installingDaemon && (
                     <>
                         <p>daemon does not exist</p>
@@ -85,7 +85,7 @@ function Settings() {
                 {installingDaemon && (
                     <p className={"text-2xl font-bold"}>installing daemon, please do not exit!</p>
                 )}
-            </p>
+            </div>
         </>
     );
 }
