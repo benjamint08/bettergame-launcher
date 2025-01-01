@@ -115,14 +115,7 @@ function Home() {
                 "auth": localStorage.getItem("token"),
                 "username": localStorage.getItem("username")
             })
-        })
-        setTimeout(() => {
-            if(playing === false) {
-                return;
-            }
-            setPlaying(false);
-            setMode("");
-        }, 20000);
+        });
     }
 
     async function playSolos() {
@@ -143,9 +136,6 @@ function Home() {
                 "region": selectedRegion
             })
         });
-        setTimeout(() => {
-            setPlaying(false);
-        }, 20000);
     }
 
     function beginCheckAssets() {
