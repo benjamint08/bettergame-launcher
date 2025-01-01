@@ -6,9 +6,11 @@ import App from "./App";
 import Home from "./routes/Home.jsx";
 import Settings from "./routes/Settings.jsx";
 import SystemReport from "./routes/SystemReport.jsx";
+import Unsupported from "./routes/Unsupported.jsx";
 
 import Login from "./routes/auth/Login.jsx";
 import Logout from "./routes/auth/Logout.jsx";
+import Credits from "./routes/Credits.jsx";
 
 import HomeLayout from "./layouts/HomeLayout";
 
@@ -23,6 +25,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <Route index element={<Home />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="sysreport" element={<SystemReport />} />
+                <Route path="unsupported" element={<Unsupported />} />
+                <Route path="credits" element={<Credits />} />
             </Route>
 
             <Route path="login" element={<Login />} />

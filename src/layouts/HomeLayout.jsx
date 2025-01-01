@@ -3,14 +3,17 @@ import {useEffect, useState} from "react";
 import {fetch} from "@tauri-apps/plugin-http";
 
 const routes = [{
-    "name": "Play",
+    "name": "play",
     "path": "/home",
 }, {
-    "name": "Settings",
+    "name": "settings",
     "path": "/home/settings",
 }, {
-    "name": "System Report",
+    "name": "system report",
     "path": "/home/sysreport",
+}, {
+    "name": "credits",
+    "path": "/home/credits",
 }]
 
 function HomeLayout() {
@@ -58,18 +61,19 @@ function HomeLayout() {
             } else {
                 setBetterBucks(localStorage.getItem("better-bucks"));
                 setUserSubscribed(localStorage.getItem("subscribed"));
+                setDataReady(true);
             }
         }
     }, [location]);
 
     return (
         <div className="flex flex-col h-screen">
-            <nav className="bg-[#1e1e1e] text-white p-4 border-b-2 flex justify-between items-center">
+            <nav data-tauri-drag-region className="bg-[#1e1e1e] text-white p-4 border-b-2 flex justify-between items-center select-none">
                 <h1 className="text-xl font-bold">better.game</h1>
                 {!loggedIn && (
                     <Link to={"/login"}>
                         <button className="bg-[#2a2a2a] hover:bg-[#3a3a3a] transition duration-200 py-2 px-4 rounded">
-                            Login
+                            login
                         </button>
                     </Link>
                 )}
@@ -85,7 +89,7 @@ function HomeLayout() {
                         <p className="mr-4">{betterBucks} better bucks</p>
                         <Link to={"/logout"}>
                             <button className="bg-[#2a2a2a] hover:bg-[#3a3a3a] transition duration-200 py-2 px-4 rounded">
-                                Logout
+                                logout
                             </button>
                         </Link>
                     </div>

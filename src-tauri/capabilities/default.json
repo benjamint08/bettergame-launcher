@@ -24,10 +24,49 @@
         }
       ]
     },
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "exec-sh",
+          "cmd": "sh",
+          "args": [
+            "-c",
+            {
+              "validator": "*"
+            }
+          ],
+          "sidecar": false
+        }
+      ]
+    },
     "os:default",
     {
       "identifier": "http:default",
-      "allow": [{ "url": "https://better.game" }, { "url": "https://better-game.network" }]
+      "allow": [
+        {
+          "url": "https://better.game"
+        },
+        {
+          "url": "https://better-game.network"
+        },
+        {
+          "url": "http://localhost:8080"
+        }
+      ]
+    },
+    "fs:default",
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "$APPDATA/*" }]
+    },
+    {
+      "identifier": "fs:allow-app-read-recursive",
+      "allow": [{ "path": "$APPDIR/**" }]
+    },
+    {
+      "identifier": "fs:allow-app-write-recursive",
+      "allow": [{ "path": "$APPDIR/**" }]
     }
   ]
 }
