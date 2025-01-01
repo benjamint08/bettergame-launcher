@@ -1,6 +1,6 @@
 import {isSupportedOS} from "../functions/isSupportedOS.js";
 import {useEffect, useState} from "react";
-import { exists, BaseDirectory } from '@tauri-apps/plugin-fs';
+import {BaseDirectory, exists} from '@tauri-apps/plugin-fs';
 import {fetch} from "@tauri-apps/plugin-http";
 import {Command} from "@tauri-apps/plugin-shell";
 
@@ -8,11 +8,16 @@ function Home() {
     const [daemonExists, setDaemonExists] = useState(false);
     const [allDataReady, setAllDataReady] = useState(false);
     const [daemonRunning, setDaemonRunning] = useState(false);
-    const [daemonLogs, setDaemonLogs] = useState("");
+    // const [daemonLogs, setDaemonLogs] = useState("");
     const [assetsReady, setAssetsReady] = useState(false);
 
     const [playing, setPlaying] = useState(false);
     const [mode, setMode] = useState("");
+
+    const [serverPings, setServerPings] = useState({});
+    const [pingReady, setPingReady] = useState(false);
+
+    const [selectedRegion, setSelectedRegion] = useState("eu");
 
     async function killDaemon() {
         try {
@@ -65,6 +70,20 @@ function Home() {
     async function playSolos() {
         setPlaying(true);
         setMode("solos");
+        await fetch(`http://localhost:8080/kill?username=${localStorage.getItem("username")}&auth=${localStorage.getItem("token")}`, {
+            method: "POST"
+        });
+        await fetch(`http://localhost:8080/launch-client`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "auth": localStorage.getItem("token"),
+                "username": localStorage.getItem("username"),
+                "region": selectedRegion
+            })
+        });
         setTimeout(() => {
             setPlaying(false);
         }, 20000);
@@ -102,6 +121,32 @@ function Home() {
             const data = await assetsReady.text();
             if(data.includes("fetch-assets")) {
                 setAssetsReady(true);
+                const regions = await fetch(`https://better.game/api/queue?username=${localStorage.getItem("username")}&auth=${localStorage.getItem("token")}&region=eu&session=`, {
+                    method: "GET",
+                });
+                const regionData = await regions.json();
+                const servers = regionData["servers"];
+                let tempData = [];
+                for(let i = 0; i < servers.length; i++) {
+                    tempData.push(servers[i]);
+                }
+                for(let i=0;i<tempData.length;i++) {
+                    delete tempData[i]["players"];
+                }
+                console.log(JSON.stringify({"servers": tempData}));
+                const pings = await fetch(`http://localhost:8080/region-ping`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        "servers": tempData
+                    })
+                });
+                const pingData = await pings.json();
+                console.log(pingData);
+                setServerPings(pingData);
+                setPingReady(true);
             }
         }, 2000);
     }
@@ -142,10 +187,26 @@ function Home() {
                 <div className={"mt-2 text-2xl font-bold flex-col flex"}>
                     <p>assets ready? yes</p>
                     <p>you can now play the game</p>
-                    <div className={"w-full flex justify-center"}>
-                        <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2"} onClick={playOffline}>play offline</button>
-                        <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2 ml-2"} onClick={playSolos}>play solos</button>
-                    </div>
+                    {pingReady && (
+                        <>
+                            <h1 className={"text-2xl font-bold mt-2"}>regions</h1>
+                            <select className={"bg-[#2a2a2a] text-black p-2 rounded mt-2"} value={selectedRegion}
+                                    onChange={(e) => setSelectedRegion(e.target.value)}>
+                                {Object.keys(serverPings).map((region, index) => (
+                                    <option key={index} value={region}>{region} - {serverPings[region]}ms</option>
+                                ))}
+                            </select>
+                            <h1 className={"text-2xl font-bold mt-2"}>play modes</h1>
+                            <div className={"w-full flex justify-center"}>
+                                <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2"}
+                                        onClick={playOffline}>play offline
+                                </button>
+                                <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2 ml-2"}
+                                        onClick={playSolos}>play solos ({selectedRegion})
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
             {playing && (
