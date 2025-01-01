@@ -5,10 +5,10 @@ import {fetch} from "@tauri-apps/plugin-http";
 import {Command} from "@tauri-apps/plugin-shell";
 
 function Home() {
+    const [loggedIn, setLoggedIn] = useState(false);
     const [daemonExists, setDaemonExists] = useState(false);
     const [allDataReady, setAllDataReady] = useState(false);
     const [daemonRunning, setDaemonRunning] = useState(false);
-    // const [daemonLogs, setDaemonLogs] = useState("");
     const [assetsReady, setAssetsReady] = useState(false);
 
     const [playing, setPlaying] = useState(false);
@@ -23,7 +23,7 @@ function Home() {
         try {
             await Command.create('exec-sh', [
                 '-c',
-                'ps aux | grep bettergame-daemon | grep -v grep | awk \'{print $2}\' | xargs kill'
+                'ps aux | grep bettergame-dae | grep -v grep | awk \'{print $2}\' | xargs kill'
             ]).execute();
         } catch (e) {
             console.log("no existing daemons found");
@@ -31,6 +31,12 @@ function Home() {
     }
 
     useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            setLoggedIn(false);
+        } else {
+            setLoggedIn(true);
+        }
+
         async function checkOS() {
             let supported = await isSupportedOS();
             if (!supported) {
@@ -157,12 +163,17 @@ function Home() {
             <p className={"mt-4"}>
                 better.game is a game to play with your friends. it is currently in beta, so there may be bugs.
             </p>
-            {allDataReady && !daemonExists && (
+            {!loggedIn && (
+                <p className={"mt-4"}>
+                    you must be logged in to play.
+                </p>
+            )}
+            {allDataReady && !daemonExists && loggedIn && (
                 <>
                     <p>daemon exists? no, go to settings to fix</p>
                 </>
             )}
-            {!daemonRunning && daemonExists && (
+            {!daemonRunning && daemonExists && loggedIn && (
                 <div className={"mt-2 text-2xl font-bold"}>
                     <p>daemon running? no. daemon must be running to play</p>
                     <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2"} onClick={startDaemon}>start daemon</button>
