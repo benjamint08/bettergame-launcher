@@ -30,6 +30,21 @@ function Home() {
         }
     }
 
+    async function checkDaemonRunning() {
+        try {
+            const daemon = await Command.create('exec-sh', [
+                '-c',
+                'ps aux | grep bettergame-dae | grep -v grep'
+            ]).execute();
+            if(daemon.stdout !== "") {
+                setDaemonRunning(true);
+            }
+        } catch (e) {
+            console.log("no existing daemons found");
+            setDaemonRunning(false);
+        }
+    }
+
     useEffect(() => {
         if (!localStorage.getItem("token")) {
             setLoggedIn(false);
@@ -50,6 +65,7 @@ function Home() {
         async function checkDaemon() {
             setDaemonExists(await exists('bettergame-daemon', {baseDir: BaseDirectory.AppData}));
             setAllDataReady(true);
+            await checkDaemonRunning();
         }
         checkDaemon();
     }, []);

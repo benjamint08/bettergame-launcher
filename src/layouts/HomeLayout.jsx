@@ -1,6 +1,7 @@
 import {Link, Outlet, useLocation} from "react-router";
 import {useEffect, useState} from "react";
 import {fetch} from "@tauri-apps/plugin-http";
+import { getVersion } from '@tauri-apps/api/app';
 
 const routes = [{
     "name": "play",
@@ -25,8 +26,13 @@ function HomeLayout() {
     const [userSubscribed, setUserSubscribed] = useState(false);
     const [dataReady, setDataReady] = useState(false);
 
+    const [appVersion, setAppVersion] = useState("0.0.0");
+
     useEffect(() => {
         setCurrentRoute(location.pathname);
+        getVersion().then(version => {
+            setAppVersion(version);
+        });
         if(localStorage.getItem("token")) {
             setLoggedIn(true);
             setUsername(localStorage.getItem('username'));
@@ -97,7 +103,7 @@ function HomeLayout() {
             </nav>
             <div className="flex flex-1">
                 <aside className="bg-[#1e1e1e] text-white w-1/4 border-r-2">
-                {routes.map((route, index) => (
+                    {routes.map((route, index) => (
                         <Link to={route.path} key={index}>
                             <button
                                 className={"w-full pb-4 pt-4 px-4 text-start bg-[#1e1e1e] hover:bg-[#2a2a2a] transition duration-200"
@@ -107,6 +113,7 @@ function HomeLayout() {
                             </button>
                         </Link>
                     ))}
+                    <p className="text-center mt-4">v{appVersion}</p>
                 </aside>
                 <main className="flex-1 p-4 bg-[#1e1e1e] text-white">
                     <Outlet/>

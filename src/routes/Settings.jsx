@@ -10,6 +10,32 @@ function Settings() {
     useEffect(() => {
         async function checkDaemon() {
             setDaemonExists(await exists('bettergame-daemon', {baseDir: BaseDirectory.AppData}));
+            if(daemonExists) {
+                let daemonDateInstalled = localStorage.getItem("daemon_date_installed");
+                if(daemonDateInstalled) {
+                    let date = new Date(daemonDateInstalled);
+                    let now = new Date();
+                    if((now - date) >= 7200000) {
+                        try {
+                            await Command.create('exec-sh', [
+                                '-c',
+                                'ps aux | grep bettergame-dae | grep -v grep | awk \'{print $2}\' | xargs kill'
+                            ]).execute();
+                        } catch (e) {
+                            console.log("no existing daemons found");
+                        }
+                        try {
+                            await Command.create('exec-sh', [
+                                '-c',
+                                'rm -rf ~/.local/share/co.p3pr.bettergame-launcher/bettergame-daemon'
+                            ]).execute();
+                        } catch (e) {
+                            console.log("no daemon found");
+                        }
+                        setDaemonExists(false);
+                    }
+                }
+            }
         }
         checkDaemon();
     }, []);
@@ -32,6 +58,7 @@ function Settings() {
             '-c',
             'chmod +x ~/.local/share/co.p3pr.bettergame-launcher/bettergame-daemon'
         ]).execute();
+        localStorage.setItem("daemon_date_installed", new Date().toString());
         setDaemonExists(true);
         setInstallingDaemon(false);
     }

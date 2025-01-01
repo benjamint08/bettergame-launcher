@@ -21,6 +21,10 @@ function Login() {
         if(loggingIn) {
             return;
         }
+        if (username === "" || password === "") {
+            setError("Please fill out all fields");
+            return;
+        }
         setLoggingIn(true);
         const url = "https://better.game/api/sign-in"
         const data = {
