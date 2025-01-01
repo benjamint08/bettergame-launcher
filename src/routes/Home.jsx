@@ -9,8 +9,10 @@ function Home() {
     const [allDataReady, setAllDataReady] = useState(false);
     const [daemonRunning, setDaemonRunning] = useState(false);
     const [daemonLogs, setDaemonLogs] = useState("");
-    const [child, setChild] = useState(null);
     const [assetsReady, setAssetsReady] = useState(false);
+
+    const [playing, setPlaying] = useState(false);
+    const [mode, setMode] = useState("");
 
     async function killDaemon() {
         try {
@@ -41,9 +43,31 @@ function Home() {
         checkDaemon();
     }, []);
 
-    function appendToLogs(log) {
-        const holdLogs = daemonLogs;
-        setDaemonLogs(holdLogs + "\n" + log);
+    async function playOffline() {
+        setPlaying(true);
+        setMode("offline");
+        await fetch(`http://localhost:8080/launch-offline`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "auth": localStorage.getItem("token"),
+                "username": localStorage.getItem("username")
+            })
+        })
+        setTimeout(() => {
+            setPlaying(false);
+            setMode("");
+        }, 20000);
+    }
+
+    async function playSolos() {
+        setPlaying(true);
+        setMode("solos");
+        setTimeout(() => {
+            setPlaying(false);
+        }, 20000);
     }
 
     async function startDaemon() {
@@ -61,9 +85,8 @@ function Home() {
         dmn.stdout.on('data', line => console.log("DAEMON: " + line));
         dmn.stderr.on('data', line => console.log("DAEMON: " + line));
 
-        const child = await dmn.spawn();
+        await dmn.spawn();
         setDaemonRunning(true);
-        setChild(child);
         setAssetsReady(false);
         setTimeout(async () => {
             const assetsReady = await fetch(`http://localhost:8080/fetch-assets`, {
@@ -115,10 +138,20 @@ function Home() {
                     <p>wait patiently</p>
                 </div>
             )}
-            {daemonRunning && assetsReady && (
-                <div className={"mt-2 text-2xl font-bold"}>
+            {daemonRunning && assetsReady && !playing && (
+                <div className={"mt-2 text-2xl font-bold flex-col flex"}>
                     <p>assets ready? yes</p>
                     <p>you can now play the game</p>
+                    <div className={"w-full flex justify-center"}>
+                        <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2"} onClick={playOffline}>play offline</button>
+                        <button className={"bg-[#2a2a2a] text-white p-2 rounded mt-2 ml-2"} onClick={playSolos}>play solos</button>
+                    </div>
+                </div>
+            )}
+            {playing && (
+                <div className={"mt-2 text-2xl font-bold"}>
+                    <p>playing...</p>
+                    <p>mode: {mode}</p>
                 </div>
             )}
         </div>
