@@ -1,7 +1,43 @@
-Copyright 2024-present Ben Thomas
+better.game Launcher License by Ben Thomas
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Copyright © 2024-Present Ben Thomas
+Credits to Nathan Todd-Stone for creating better.game
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+1. License Grant
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+You are granted a limited, non-exclusive, non-transferable, and revocable license to:
+
+View and use the source code of better.game Launcher.
+
+Submit contributions via pull requests, subject to approval by the project maintainer.
+
+Download the software for personal use via the GitHub Releases page.
+
+
+2. Restrictions
+
+You are NOT permitted to:
+
+Fork, redistribute, or modify this code outside of the official repository.
+
+Create derivative works based on this project.
+
+Use the software for commercial purposes without explicit permission.
+
+
+3. Contributions
+
+By submitting code, you:
+
+Grant Ben Thomas an unrestricted, irrevocable license to use, modify, and distribute your contributions.
+
+Confirm that your contributions do not violate any third-party rights.
+
+
+4. Disclaimer
+
+This software is provided "as is" without warranties of any kind. The authors are not liable for any damages arising from its use.
+
+5. Termination
+
+Any violation of these terms will result in the immediate termination of your rights under this license.
