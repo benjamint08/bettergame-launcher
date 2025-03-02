@@ -17,3 +17,5 @@ arch linux users may get a gray screen when launching the appimage. this is due 
 ```bash
 WEBKIT_DISABLE_DMABUF_RENDERER=1 ./bettergame-launcher.AppImage
 ```
+
+this repository has a [license](https://github.com/benjamint08/bettergame-launcher/blob/master/LICENSE).
